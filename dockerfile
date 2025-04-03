@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 8000
 
 # Run the application
-CMD ["fastapi", "run"]
+CMD ["fastapi", "run","dev"]
