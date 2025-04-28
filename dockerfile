@@ -21,6 +21,7 @@ WORKDIR /app
 # Copy virtual environment from builder
 COPY --from=builder /app/venv venv
 COPY main.py main.py
+COPY hf_api.py hf_api.py
 
 ENV VIRTUAL_ENV=/app/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
