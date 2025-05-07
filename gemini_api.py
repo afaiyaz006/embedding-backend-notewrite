@@ -2,34 +2,43 @@ import requests
 import os
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from google import genai
+from google.genai import types
 
 # Load HuggingFace API key from .env
 load_dotenv()
 HF_API_KEY = os.getenv('HF_API_KEY')
-
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 HF_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=512,       # Max tokens/chars per chunk
     chunk_overlap=50,     # Overlap between chunks
 )
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+# def get_embedding(text: str):
+#     url = f"https://api-inference.huggingface.co/pipeline/feature-extraction/{HF_MODEL_NAME}"
+#     headers = {
+#         "Authorization": f"Bearer {HF_API_KEY}",
+#         "Content-Type": "application/json"
+#     }
+#     payload = {"inputs": text}
 
-def get_embedding(text: str):
-    url = f"https://api-inference.huggingface.co/pipeline/feature-extraction/{HF_MODEL_NAME}"
-    headers = {
-        "Authorization": f"Bearer {HF_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    payload = {"inputs": text}
+#     response = requests.post(url, headers=headers, json=payload)
 
-    response = requests.post(url, headers=headers, json=payload)
+#     if response.status_code != 200:
+#         raise Exception(f"HuggingFace API Error: {response.text}")
 
-    if response.status_code != 200:
-        raise Exception(f"HuggingFace API Error: {response.text}")
-
-    embedding = response.json()
-    return embedding
-
+#     embedding = response.json()
+#     return embedding
+def get_embedding(text:str):
+    result = gemini_client.models.embed_content(
+        model = "text-embedding-004",
+        contents=text,
+        config=types.EmbedContentConfig(task_type="SEMANTIC_SIMILARITY")
+    )
+    
+    return result.embeddings[0].values
 def split_and_embed_text(input_texts: list[str]):
     """
     Splits input text into chunks and generates embeddings for each chunk.

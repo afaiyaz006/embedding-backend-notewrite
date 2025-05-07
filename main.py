@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from qdrant_client import QdrantClient
 from typing import List
 import os
-from hf_api import split_and_embed_text
+from gemini_api import split_and_embed_text
 from dotenv import load_dotenv
 from pathlib import Path
 from qdrant_client.models import PointStruct
@@ -18,7 +18,7 @@ app = FastAPI(
     version="1.0.0",
     
 )
-vector_size=384
+vector_size=768
 # Initialize remote Qdrant client
 client = QdrantClient(
     url=os.getenv('Q_URL'),
