@@ -12,8 +12,8 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 HF_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=512,       # Max tokens/chars per chunk
-    chunk_overlap=50,     # Overlap between chunks
+    chunk_size=500,       # Max tokens/chars per chunk
+    chunk_overlap=100,     # Overlap between chunks
 )
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 # def get_embedding(text: str):
@@ -49,8 +49,10 @@ def split_and_embed_text(input_texts: list[str]):
     """
    
     chunks=[]
+    total_texts=""
     for text in input_texts:
-        chunks.extend(text_splitter.split_text(text))
+        total_texts+=text
+    chunks.extend(text_splitter.split_text(total_texts))
 
     embeddings = []
     for chunk in chunks:
@@ -63,9 +65,7 @@ if __name__ == "__main__":
     """
     Testing code
     """
-    input_texts = ["""A quick brown fox jumps over the lazy dog. 
-    Then it runs into the forest where it meets other animals. 
-    They play together all afternoon before returning home at sunset."""]
+    input_texts = ["""A quick brown fox darted through the tall grass, its sleek body cutting through the early morning mist like an arrow. It leapt gracefully over a sleeping dog, careful not to disturb its peaceful slumber, and continued on its way toward the edge of the dense forest. There, the trees stood like ancient sentinels, their branches whispering secrets to the wind. As the fox ventured deeper, sunlight filtered through the canopy in golden rays, illuminating patches of wildflowers and mossy stones. Soon, the fox encountered a gathering of animals—rabbits, deer, squirrels, and birds—all drawn to a small clearing where laughter and joy echoed beneath the boughs. They played games of chase and hide-and-seek, their movements a blur of fur and feathers. Hours passed in a blur of happiness until the sky blushed with the hues of dusk. One by one, the animals said their goodbyes, returning to their burrows and nests, while the fox, content and tired, padded quietly home under the soft light of the setting sun."""]
 
     chunks, embeddings = split_and_embed_text(input_texts)
 
